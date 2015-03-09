@@ -34,7 +34,7 @@ class mariadb (
   if $manage_repo == true {
     # Set up repositories
     class { $mariadb::params::repo_class:
-      stage => setup,
+#      stage => setup,
     }
   }
 
