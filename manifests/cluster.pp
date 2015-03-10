@@ -47,7 +47,7 @@
 #     If true, configure each node to sync with only one other node. Sets
 #     `wsrep_cluster_address = 'gcomm://192.168.0.1'`. If false,
 #     sets `wsrep_cluster_address = 'gcomm://192.168.0.1,192.168.0.2,192.168.0.3'`,
-#     etc. based on number of nodes and the IP/hostname as set in 
+#     etc. based on number of nodes and the IP/hostname as set in
 #     `cluster_servers`.
 #   [*manage_status*]
 #     If true, manage the status user and status script.
@@ -100,6 +100,7 @@ class mariadb::cluster (
   class { 'mariadb::cluster::auth':
     wsrep_sst_user     => $wsrep_sst_user,
     wsrep_sst_password => $wsrep_sst_password,
+    require => Class['mariadb::server']
   }
 
   if $manage_status == true {
@@ -110,6 +111,7 @@ class mariadb::cluster (
     class { 'mariadb::cluster::status':
       status_user     => $status_user,
       status_password => $status_password,
+      require => Class['mariadb::server']
     }
   }
 

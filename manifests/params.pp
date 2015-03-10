@@ -72,6 +72,7 @@ class mariadb::params {
       $ssl_cert               = "${config_dir}/server-cert.pem"
       $ssl_key                = "${config_dir}//server-key.pem"
       $repo_class             = 'mariadb::repo::debian'
+      $repo_select            = 'mariadb'
       $wsrep_provider         = '/usr/lib/galera/libgalera_smm.so'
     }
 
