@@ -130,7 +130,7 @@ class mariadb::cluster (
   }
 
   if $wsrep_sst_method == 'xtrabackup' {
-    ensure_packages(['percona-xtrabackup'])
+    ensure_packages(['percona-xtrabackup','socat'])
   }
 
 }
