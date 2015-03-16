@@ -89,8 +89,7 @@ class mariadb::server (
         }
 
         file { '/etc/mysql/debian.cnf':
-          content => template('mariadb/debian.cnf.erb'),
-          require       => Database_user["debian-sys-maint@localhost"],
+          content => template('mariadb/debian.cnf.erb')
         }
       }
 
