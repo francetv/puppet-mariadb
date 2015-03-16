@@ -81,22 +81,8 @@ class mariadb::server (
   }
 
   if $debiansysmaint_password != undef {
-    case $::osfamily {
-      'Debian': {
-        database_user { "debian-sys-maint@localhost":
-          ensure        => $ensure,
-          password_hash => mysql_password($debiansysmaint_password)
-        }
-
-        file { '/etc/mysql/debian.cnf':
-          content => template('mariadb/debian.cnf.erb')
-        }
-      }
-
-      default: {
-#        file { '/etc/mysql/debian.cnf':
-#          content => template('mariadb/debian.cnf.erb'),
-#        }
+      file { '/etc/mysql/debian.cnf':
+        content => template('mariadb/debian.cnf.erb')
       }
     }
 
