@@ -72,7 +72,7 @@ class mariadb::server (
 
   package { $package_names:
     ensure  => $package_ensure,
-    require => Package[$client_package_names] 
+    require => Package[$client_package_names]
   }
 
   file { '/var/log/mysql/error.log':
@@ -80,11 +80,28 @@ class mariadb::server (
     require => Package[$package_names],
   }
 
-  #if $debiansysmaint_password != undef {
-  #  file { '/etc/mysql/debian.cnf':
-  #    content => template('mariadb/debian.cnf.erb'),
-  #  }
-  #}
+  if $debiansysmaint_password != undef {
+    case $::osfamily {
+      'Debian': {
+        database_user { "debian-sys-maint@localhost":
+          ensure        => $ensure,
+          password_hash => mysql_password($backuppassword),
+          require       => Class['mariadb::server'],
+        }
+
+        file { '/etc/mysql/debian.cnf':
+          content => template('mariadb/debian.cnf.erb'),
+        }
+      }
+
+      default: {
+#        file { '/etc/mysql/debian.cnf':
+#          content => template('mariadb/debian.cnf.erb'),
+#        }
+      }
+    }
+
+  }
 
   if $enabled {
     $service_ensure = 'running'
