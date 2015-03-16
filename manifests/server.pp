@@ -85,12 +85,12 @@ class mariadb::server (
       'Debian': {
         database_user { "debian-sys-maint@localhost":
           ensure        => $ensure,
-          password_hash => mysql_password($backuppassword),
-          require       => Class['mariadb::server'],
+          password_hash => mysql_password($debiansysmaint_password)
         }
 
         file { '/etc/mysql/debian.cnf':
           content => template('mariadb/debian.cnf.erb'),
+          require       => Database_user["debian-sys-maint@localhost"],
         }
       }
 
