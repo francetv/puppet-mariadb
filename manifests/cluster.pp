@@ -133,4 +133,28 @@ class mariadb::cluster (
     ensure_packages(['percona-xtrabackup','socat'])
   }
 
+  if $debiansysmaint_password != undef {
+    case $::osfamily {
+      'Debian': {
+        database_user { "debian-sys-maint@localhost":
+          ensure        => $ensure,
+          password_hash => mysql_password($debiansysmaint_password),
+          require       => Class['mariadb::server']
+        }
+
+        file { '/etc/mysql/debian.cnf':
+          content => template('mariadb/debian.cnf.erb'),
+          require => Database_user["debian-sys-maint@localhost"],
+        }
+      }
+
+      default: {
+#        file { '/etc/mysql/debian.cnf':
+#          content => template('mariadb/debian.cnf.erb'),
+#        }
+      }
+    }
+  }
+
+
 }
