@@ -81,9 +81,9 @@ class mariadb::server (
   }
 
   if $debiansysmaint_password != undef {
-    file { '/etc/mysql/debian.cnf':
-      content => template('mariadb/debian.cnf.erb')
-    }
+#    file { '/etc/mysql/debian.cnf':
+#      content => template('mariadb/debian.cnf.erb')
+#    }
   }
 
   if $enabled {
