@@ -83,7 +83,7 @@
 #
 define mariadb::server::config (
   $settings,
-  $notify_service = true,
+  $notify_service = false,
   $config_dir     = $mariadb::params::config_dir,
 ) {
   include mariadb::params
