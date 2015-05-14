@@ -96,7 +96,10 @@ class mariadb::config(
     }
 
     # Define the write-way
-    $set_root_pw_cmd = inline_template("<% if File.exist?('~/.my.cnf') %>--defaults-file=~/.my.cnf<% end %>")
+    case file('~/.my.cnf','/dev/null') {
+      true:      { $set_root_pw_cmd='--defaults-file=~/.my.cnf' }
+      default:   { $set_root_pw_cmd='' }
+    }
 
     exec { 'set_mariadb_rootpw':
       command   => "mysqladmin ${set_root_pw_cmd}  -u root password '${root_password}'",
