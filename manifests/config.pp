@@ -95,27 +95,27 @@ class mariadb::config(
       default: { $old_pw="-p'${old_root_password}'" }
     }
 
-    mysql_user { 'root@localhost':
-      ensure        => present,
-      password_hash => mysql_password($root_password),
-      require   => File[$mariadb::params::config_dir]
-    }
-
-    file { "${::root_home}/.my.cnf":
-      content => template('mysql/my.cnf.pass.erb'),
-      owner   => 'root',
-      mode    => '0600',
+    exec { 'set_mariadb_rootpw':
+      command   => "if [ -f ~/.my.cnf ]; then mysqladmin --defaults-file=~/.my.cnf password '${root_password}'; else mysqladmin -u root ${old_pw} password '${root_password}'; fi",
+      logoutput => true,
+      unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
+      path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
+      notify    => $restart ? {
+        true => Exec['mariadb-restart'],
+        false => undef,
+      },
+      require   => File[$mariadb::params::config_dir],
     }
 
     file { '/root/.my.cnf':
       content => template('mariadb/my.cnf.pass.erb'),
-      require => Mysql_user['root@localhost'],
+      require => Exec['set_mariadb_rootpw'],
     }
 
     if $etc_root_password {
       file{ '/etc/my.cnf':
         content => template('mariadb/my.cnf.pass.erb'),
-        require => Mysql_user['root@localhost'],
+        require => Exec['set_mariadb_rootpw'],
       }
     }
   } else {
