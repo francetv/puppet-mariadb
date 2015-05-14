@@ -96,7 +96,7 @@ class mariadb::config(
     }
 
     exec { 'set_mariadb_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password '${root_password}'",
+      command   => "if [ -f ~/.my.cnf ]; then mysqladmin --defaults-file=~/.my.cnf password '${root_password}'; else mysqladmin -u root ${old_pw} password '${root_password}'; fi",
       logoutput => true,
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
