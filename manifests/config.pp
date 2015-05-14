@@ -96,9 +96,10 @@ class mariadb::config(
     }
 
     # Define the write-way
-    case file('~/.my.cnf','/dev/null') {
-      true:      { $set_root_pw_cmd='--defaults-file=~/.my.cnf' }
-      default:   { $set_root_pw_cmd='' }
+    $mycnf_exist = file('~/.my.cnf','/dev/null')
+    case $mycnf_exist {
+      '':        { $set_root_pw_cmd='' }
+      default:   { $set_root_pw_cmd='--defaults-file=~/.my.cnf' }
     }
 
     exec { 'set_mariadb_rootpw':
