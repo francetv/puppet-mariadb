@@ -95,34 +95,27 @@ class mariadb::config(
       default: { $old_pw="-p'${old_root_password}'" }
     }
 
-    # Define the write-way
-    $mycnf_exist = file('~/.my.cnf','/dev/null')
-    case $mycnf_exist {
-      '':        { $set_root_pw_cmd='' }
-      default:   { $set_root_pw_cmd='--defaults-file=~/.my.cnf' }
+    mysql_user { 'root@localhost':
+      ensure        => present,
+      password_hash => mysql_password($root_password),
+      require   => File[$mariadb::params::config_dir]
     }
 
-    exec { 'set_mariadb_rootpw':
-      command   => "mysqladmin ${set_root_pw_cmd}  -u root password '${root_password}'",
-      logoutput => true,
-      unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
-      path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      notify    => $restart ? {
-        true => Exec['mariadb-restart'],
-        false => undef,
-      },
-      require   => File[$mariadb::params::config_dir],
+    file { "${::root_home}/.my.cnf":
+      content => template('mysql/my.cnf.pass.erb'),
+      owner   => 'root',
+      mode    => '0600',
     }
 
     file { '/root/.my.cnf':
       content => template('mariadb/my.cnf.pass.erb'),
-      require => Exec['set_mariadb_rootpw'],
+      require => Mysql_user['root@localhost'],
     }
 
     if $etc_root_password {
       file{ '/etc/my.cnf':
         content => template('mariadb/my.cnf.pass.erb'),
-        require => Exec['set_mariadb_rootpw'],
+        require => Mysql_user['root@localhost'],
       }
     }
   } else {
