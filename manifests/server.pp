@@ -71,11 +71,13 @@ class mariadb::server (
   create_resources( 'class', $config_class )
 
   if grep($package_names, 'mariadb-galera-server').count == 1 and $repo_version == '10.1' {
-    $package_ensure = 'absent'
+    $package_ensure_real = 'absent'
+  } else {
+    $package_ensure_real = $package_ensure
   }
 
   package { $package_names:
-    ensure  => $package_ensure,
+    ensure  => $package_ensure_real,
     require => Package[$client_package_names]
   }
 
