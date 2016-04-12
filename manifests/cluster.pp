@@ -83,10 +83,12 @@ class mariadb::cluster (
   $manage_repo             = true,
 ) inherits mariadb::params {
 
-  package { $galera_name:
-    ensure => $galera_ensure,
+  if $repo_version != '10.1' {
+    package { $galera_name:
+      ensure => $galera_ensure,
+    }
   }
-
+  
   class { 'mariadb::server':
     package_names           => $package_names,
     package_ensure          => $package_ensure,
