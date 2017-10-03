@@ -1,7 +1,7 @@
 ### MANAGED BY PUPPET ###
 <% @settings.sort.each do |section, content|      -%>
-[<%= @section %>]
-<%   @content.sort.each do |key, values|          -%>
+[<%= section %>]
+<%   content.sort.each do |key, values|          -%>
 <%     [values].flatten.sort.each do |value|     -%>
 <%= value == false ? '#' : '' %><%= key -%><%=
          case value
