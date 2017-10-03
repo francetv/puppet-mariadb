@@ -4,7 +4,7 @@ socket    = <%= @socket %>
 [mysqld_safe]
 socket    = <%= @socket %>
 nice    = 0
-<% if log_error == 'syslog' -%>
+<% if @log_error == 'syslog' -%>
 syslog
 <% end -%>
 [mysqld]
